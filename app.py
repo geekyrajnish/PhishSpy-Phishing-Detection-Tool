@@ -2,7 +2,7 @@
 from flask import Flask, request, json
 from main import main
 from flask_cors import CORS, cross_origin
-import sqlite3
+# import sqlite3
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
@@ -27,13 +27,13 @@ def checkphishing():
 @app.route('/count')
 @cross_origin(origin='*')
 def checkcount():
-    conn = sqlite3.connect("database.db")
-    cur = conn.cursor()
-    cur.execute("select count from phishcount where key=1")
-    curr_count = cur.fetchall()[0][0]
-    conn.close()
-    return {"status" : 200, "count": curr_count}
-
+#     conn = sqlite3.connect("database.db")
+#     cur = conn.cursor()
+#     cur.execute("select count from phishcount where key=1")
+#     curr_count = cur.fetchall()[0][0]
+#     conn.close()
+#     return {"status" : 200, "count": curr_count}
+	pass
 @app.route('/')
 @cross_origin(origin='*')
 def home():
