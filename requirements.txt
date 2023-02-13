@@ -5,7 +5,6 @@ decorator
 dnspython
 favicon
 Flask
-Flask-Cors
 python-whois
 requests
 tldextract
