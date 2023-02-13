@@ -55,6 +55,7 @@ def checkDomainAge(url):       #critical
         w = w['creation_date']
         now = datetime.datetime.today()
         days = (now - w).days
+
         if days < 182:
             suspectScore=suspectScore+5
             return True
@@ -105,7 +106,6 @@ def checkOpenPorts(url):        #not critical
         ip=tldextract.extract(url).subdomain+"."+tldextract.extract(url).domain+"."+tldextract.extract(url).suffix
     else:
         ip=tldextract.extract(url).domain+"."+tldextract.extract(url).suffix
-    print(ip)
     portsToBeChecked=[21,22,23,80,443,445,1433,1521,3306,3389]
     OpenPortsShouldBe=[80,443]
     OpenPorts=[]
@@ -263,41 +263,39 @@ def checkSubdomainCount(url):       #non critical
 
 def run(url):
     global suspectScore
+    suspectScore = 0
     summary = []
     if checkIp(url):
-        summary.append("IP address is used as an alternative of the domain name in the URL, website containing IP address are generally phishing, trying to steal their personal information.")
+        summary.append("Using IP Address instead of Domain Name : IP address is used as an alternative of the domain name in the URL, website containing IP address are generally phishing.")
     if checkUrlLength(url):
-        summary.append("Phishing websites uses long URL to hide the doubtful part in the address bar.")
+        summary.append("The Length of the provided URL is longer : Phishing websites uses long URL to hide the doubtful part in the address bar.")
     if checkUrlSymbol(url):
-        summary.append("Phishing websites generally contains symbols such as using “@” symbol in the URL leads the browser to ignore everything preceding the “@” symbol and the real address often follows the “@” symbol.")
+        summary.append("Provided URL contains Symbols : Phishing websites generally contains symbols such as using “@” symbol in the URL leads the browser to ignore everything preceding the “@” symbol and the real address often follows the “@” symbol.")
     if checkDomainHyphen(url):
-        summary.append("The dash symbol is rarely used in legitimate URLs. Phishers tend to add prefixes or suffixes separated by (-) to the domain name so that users feel that they are dealing with a legitimate webpage. ")
-    if checkDomainAge(url):
-        summary.append("Phishing websites mostly live for a short period of time. By reviewing our dataset, we find that the minimum age of the legitimate domain is 6 months")
-    if checkDomainExpiry(url):
-        summary.append("Based on the fact that a phishing website lives for a short period of time, we believe that trustworthy domains are regularly paid for several years in advance. In our dataset, we find that the longest fraudulent domains have been used for one year only.")
+        summary.append("Provided URL contains dash : The dash symbol is rarely used in legitimate URLs. Phishers tend to add prefixes or suffixes separated by (-) to the domain name so that users feel that they are dealing with a legitimate webpage. ")
+        # summary.append("Based on the fact that a phishing website lives for a short period of time, we believe that trustworthy domains are regularly paid for several years in advance. In our dataset, we find that the longest fraudulent domains have been used for one year only.")
     if checkFaviconSource(url):
-        summary.append("If the favicon is loaded from a domain other than that shown in the address bar, then the webpage is likely to be considered a Phishing attempt. ")
+        summary.append("Favicon is being loaded from external source : If the favicon is loaded from a domain other than that shown in the address bar, then the webpage is likely to be considered a Phishing attempt. ")
     if checkShortenUrl(url):
-        summary.append("Mostly phishing website uses url shortening method.")
+        summary.append("The URL provided is using URL shortening methods to hide real URL : Mostly phishing website uses url shortening method.")
     if checkOpenPorts(url):
-        summary.append("Several firewalls, Proxy and Network Address Translation (NAT) servers will, by default, block all or most of the ports and only open the ones selected. If all ports are open there is high chance og phishing website.")
+        summary.append("Ports are open more than found in general : Several firewalls, Proxy and Network Address Translation (NAT) servers will, by default, block all or most of the ports and only open the ones selected. If all ports are open there is high chance og phishing website.")
     if checkHttpsInDomain(url):
-        summary.append("The existence of HTTPS is very important in giving the impression of website legitimacy.")
+        summary.append("https as domain name found in the URL : The existence of HTTPS is very important in giving the impression of website legitimacy and because of this, attacker manage to buy a domain containing https in it to create phishing websites.")
     # if checkDNSRecord(url):
     #     result.append("For phishing websites, either the claimed identity is not recognized by the WHOIS database or no records founded for the hostname. If the DNS record is empty or not found then the website is considered as “Phishing”.")
-    if checkDomainRank(url):
-        summary.append("Checking the domain rank using Alexa. Websites having the alexa rank more than a lakh are generally phishing.")
+    # if checkDomainRank(url):
+    #     summary.append("Checking the domain rank using Alexa. Websites having the alexa rank more than a lakh are generally phishing.")
     if checkRedirection(url):
-        summary.append("The fine line that distinguishes phishing websites from legitimate ones is how many times a website has been redirected, phishing websites containing this feature have been redirected at least 4 times. ")
+        summary.append("Too much redirection found : The fine line that distinguishes phishing websites from legitimate ones is how many times a website has been redirected, phishing websites containing this feature have been redirected at least 4 times. ")
     if checkMaliciousIframe(url):
-        summary.append("IFrame is an HTML tag used to display an additional webpage into one that is currently shown. Phishers can make use of the “iframe” tag and make it invisible i.e. without frame borders. In this regard, phishers make use of the “frameBorder” attribute which causes the browser to render a visual delineation.")
+        summary.append("Malicious IFrame found : IFrame is an HTML tag used to display an additional webpage into one that is currently shown. Phishers can make use of the “iframe” tag and make it invisible i.e. without frame borders. In this regard, phishers make use of the “frameBorder” attribute which causes the browser to render a visual delineation.")
     if checkRequestURL(url):
-        summary.append("Request URL examines whether the external objects contained within a webpage such as images, videos and sounds are loaded from another domain. In Phishing webpages, the webpage address and most of objects embedded within the webpage are from the external domain.")
+        summary.append("Most of the files are being loaded from external sources : In Phishing webpages, the webpage address and most of objects embedded within the webpage are from the external domain.")
     if checkPhishDatabase(url):
-        summary.append("Checking the url in the databases containing list of phishing websites. ")
+        summary.append("Found URL in BlackList Database.")
     if checkSlashRedirection(url):
-        summary.append("The existence of “//” within the URL path means that the user will be redirected to another website. If the Position of the Last Occurrence of "//" in the URL > 7 → Phishing.")
-    if checkSubdomainCount(url):
-        summary.append("If the website contains more than one sub-domain then there is a high chance of phishing website.")
+        summary.append("Found // in URL : The existence of “//” within the URL path means that the user will be redirected to another website. If the Position of the Last Occurrence of "//" in the URL > 7 → Phishing.")
+    # if checkSubdomainCount(url):
+    #     summary.append("If the website contains more than one sub-domain then there is a high chance of phishing website.")
     return suspectScore, summary

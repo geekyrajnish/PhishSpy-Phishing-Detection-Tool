@@ -3,6 +3,18 @@ import sqlite3
 import validators
 from validators import ValidationFailure
 import urllib.request
+import requests
+import redis
+
+# # Connect to Redis
+# redis_conn = redis.Redis(host='localhost', port=6379, db=0)
+
+
+
+
+
+global suspectScore
+
 
 def is_string_an_url(url_string: str) -> bool:
     result = validators.url(url_string)
@@ -14,11 +26,11 @@ def is_string_an_url(url_string: str) -> bool:
 
 def website_is_up(url):
     try:
-        status_code = urllib.request.urlopen(url).getcode()
+        status_code = requests.get(url).status_code
+        print("status code : ",status_code)
         return status_code == 200
     except:
         return False
-    
 
 def main(url):
     response = {}
@@ -40,14 +52,29 @@ def main(url):
         response["status-code"] = 12
         response["message"] = "URL is down or currently unavailable"
         return response
-    
-    suspectScore, summary = run(url)
-    phish_percent = round((suspectScore/82)*100,2)
+    print("URL : ",url)
+    def getData(url):
+        suspectScore, summary = run(url)
+        phish_percent = round((suspectScore/72)*100,2)
+        response["status-code"] = 10
+        response["phish_percent"] = phish_percent
+        response["summary"] = summary
+        print(url, phish_percent)
+        return response
 
-    response["status-code"] = 10
-    response["phish_percent"] = phish_percent
-    response["summary"] = summary
-    return response
+    def get_data(key):
+    # Check if the data is already in the cache
+        # cached_data = redis_conn.get(key)
+        # if cached_data is not None:
+        #     return cached_data.decode()
+        
+        # # If the data is not in the cache, retrieve it and store it in the cache
+        data = getData(key)
+        # redis_conn.set(key, data)
+        return data
+    
+    
+    return get_data(url)
 
 
     

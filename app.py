@@ -15,7 +15,7 @@ def checkphishing():
         json = request.get_json()
         if "url" not in json.keys():
             return {"message" : "parameter missing"}
-        url = json["url"]
+        url = json["url"]   
         try:
             response = main(url)
             return response
